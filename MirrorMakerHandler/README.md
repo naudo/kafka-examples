@@ -1,16 +1,25 @@
 Using a MessageHandler in MirrorMaker
 ======================================
 
-* Add the jar containing the handler to the class path. For example:
+This is just a forked version of https://github.com/gwenshap/kafka-examples to see if it's possible to modify the message using a MM Message Handler using the latest Kafka. To achieve this, we're just taking the message value and applying Rot13 to it. 
 
-    `export CLASSPATH=$CLASSPATH:/Users/gwen/workspaces/kafka-examples/MirrorMakerHandler/target/TopicSwitchingHandler-1.0-SNAPSHOT.jar`
 
-* Start MirrorMaker. Specify the Handler class in "--message.handler" and any arguments in "--message.handler.args". For example:
+```bash
 
-    `bin/kafka-mirror-maker.sh --consumer.config config/consumer.properties --message.handler com.shapira.examples.TopicSwitchingHandler --message.handler.args dc1 --producer.config config/producer.properties --whitelist mm1`
+mvn clean install
+export CLASSPATH=$CLASSPATH:~/.m2/repository/MirrorMakerExample/TopicSwitchingHandler/1.0-SNAPSHOT/TopicSwitchingHandler-1.0-SNAPSHOT.jar
+./bin/kafka-mirror-maker \
+    --consumer.config etc/kafka/consumer.properties \
+    --message.handler com.shapira.examples.TopicSwitchingHandler \
+    --message.handler.args dc1 \
+    --producer.config etc/kafka/producer.properties --whitelist mm1
+```
 
 * Test it with a producer on source topic and consumer on destination:
 
-    `bin/kafka-console-producer.sh --topic mm1 --broker-list localhost:9092`
+    `bin/kafka-console-producer --topic mm1 --broker-list localhost:9092`
     
-    `bin/kafka-console-consumer.sh --topic dc1.mm1 --zookeeper localhost:2181 --from-beginning`
+    `bin/kafka-console-consumer --topic dc1.mm1 --bootstrap-servers localhost:9092 --from-beginning`
+
+
+
